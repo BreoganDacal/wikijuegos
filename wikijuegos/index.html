@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enciclopedia de Videojuegos</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Enciclopedia de Videojuegos</h1>
+        <div class="search-container">
+            <input type="text" id="search" placeholder="Buscar juego..." oninput="searchGames()">
+            <button onclick="searchGames()">🔍 Buscar</button>
+        </div>
+        <div class="filters">
+            <div class="rating-filter">
+                <label for="min-rating">Rating mínimo:</label>
+                <input type="number" id="min-rating" min="0" max="5" step="0.1" value="0">
+                <label for="max-rating">Rating máximo:</label>
+                <input type="number" id="max-rating" min="0" max="5" step="0.1" value="5">
+                <button onclick="filterByRating()">Filtrar</button>
+            </div>
+            <div class="genre-filter">
+                <label for="genre">Filtrar por género:</label>
+                <select id="genre" onchange="filterByGenre()">
+                    <option value="">Todos</option>
+                    <option value="action">Acción</option>
+                    <option value="adventure">Aventura</option>
+                    <option value="rpg">RPG</option>
+                    <option value="shooter">Shooter</option>
+                    <option value="strategy">Estrategia</option>
+                    <option value="sports">Deportes</option>
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div id="game-list"></div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Enciclopedia de Videojuegos - Creado con la API de RAWG.io</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
