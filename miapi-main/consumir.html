@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Usuarios y Materias</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1, h2 { color: #333; }
+        form { margin-bottom: 20px; }
+        label { display: block; margin-top: 10px; }
+        input, textarea { width: 300px; padding: 5px; }
+        button { margin-top: 10px; padding: 5px 10px; }
+        table { border-collapse: collapse; width: 100%; max-width: 600px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .delete-btn { color: red; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Gestión de Usuarios y Materias</h1>
+
+    <h2>Añadir Usuario</h2>
+    <form id="addUserForm">
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" required>
+        <label for="email">Email:</label>
+        <input type="email" id="email" required>
+        <button type="submit">Añadir Usuario</button>
+    </form>
+
+    <h2>Lista de Usuarios</h2>
+    <table id="usersTable">
+        <thead>
+            <tr><th>ID</th><th>Nombre</th><th>Email</th><th>Acciones</th></tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <h2>Añadir Materia</h2>
+    <form id="addMateriaForm">
+        <label for="materia_nombre">Nombre:</label>
+        <input type="text" id="materia_nombre" required>
+        <label for="descripcion">Descripción:</label>
+        <textarea id="descripcion" required></textarea>
+        <label for="profesor">Profesor:</label>
+        <input type="text" id="profesor" required>
+        <button type="submit">Añadir Materia</button>
+    </form>
+
+    <h2>Lista de Materias</h2>
+    <table id="materiasTable">
+        <thead>
+            <tr><th>ID</th><th>Nombre</th><th>Descripción</th><th>Profesor</th><th>Acciones</th></tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        const apiUrl = window.location.origin + '/miapi-main/';
+
+        async function fetchData(endpoint, tableId) {
+            try {
+                const response = await fetch(apiUrl + endpoint);
+                const data = await response.json();
+                const tbody = document.querySelector(`#${tableId} tbody`);
+                tbody.innerHTML = '';
+
+                data.forEach(item => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = Object.values(item).map(val => `<td>${val}</td>`).join('') +
+                    `<td><button class="delete-btn" data-id="${item.id}" data-entity="${endpoint}">Eliminar</button></td>`;
+                    tbody.appendChild(tr);
+                });
+
+                attachDeleteEvents();
+            } catch (error) {
+                console.error(`Error al cargar ${endpoint}`, error);
+            }
+        }
+
+        function attachDeleteEvents() {
+            document.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', async () => {
+                    const id = button.getAttribute('data-id');
+                    const entity = button.getAttribute('data-entity');
+                    if (confirm(`¿Seguro que quieres eliminar este ${entity}?`)) {
+                        await fetch(apiUrl + entity + '/' + id, { method: 'DELETE' });
+                        fetchData(entity, entity === 'usuarios' ? 'usersTable' : 'materiasTable');
+                    }
+                });
+            });
+        }
+
+        document.getElementById('addUserForm').addEventListener('submit', async e => {
+            e.preventDefault();
+            const nombre = document.getElementById('nombre').value.trim();
+            const email = document.getElementById('email').value.trim();
+            await fetch(apiUrl + 'usuarios', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nombre, email }) });
+            fetchData('usuarios', 'usersTable');
+        });
+
+        document.getElementById('addMateriaForm').addEventListener('submit', async e => {
+            e.preventDefault();
+            const nombre = document.getElementById('materia_nombre').value.trim();
+            const descripcion = document.getElementById('descripcion').value.trim();
+            const profesor = document.getElementById('profesor').value.trim();
+            await fetch(apiUrl + 'materias', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nombre, descripcion, profesor }) });
+            fetchData('materias', 'materiasTable');
+        });
+
+        fetchData('usuarios', 'usersTable');
+        fetchData('materias', 'materiasTable');
+    </script>
+</body>
+</html>

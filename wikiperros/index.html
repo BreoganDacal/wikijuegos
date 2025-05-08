@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enciclopedia Canina</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Enciclopedia Canina</h1>
+        <div class="search-container">
+            <input type="text" id="search" placeholder="Buscar raza..." oninput="searchDogs()">
+            <button onclick="searchDogs()">🔍 Buscar</button>
+        </div>
+        <div class="filters">
+            <div class="size-filter">
+                <label for="size">Filtrar por tamaño:</label>
+                <select id="size" onchange="filterBySize()">
+                    <option value="">Todos</option>
+                    <option value="small">Pequeño</option>
+                    <option value="medium">Mediano</option>
+                    <option value="large">Grande</option>
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div id="dog-list"></div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Enciclopedia Canina - Creado con TheDogAPI</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
